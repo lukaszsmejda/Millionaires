@@ -44,6 +44,36 @@ function gameRoutes(app) {
         }
     })
 
+
+    app.post('/answer/:index', (req, res) => {
+        if (isGameOver) {
+            res.json({
+                loser: true
+            })
+        }
+
+
+        const { index } = req.params
+
+
+        const question = questions[goodAnswers]
+
+
+        const isGoodAnswer = question.correctAnswer === Number(index)
+        if (isGoodAnswer) {
+            goodAnswers++;
+        } else {
+            isGameOver = true
+        }
+
+        res.json({
+            correct: isGoodAnswer,
+            goodAnswers
+        })
+    })
+
+
 }
+
 
 module.exports = gameRoutes;

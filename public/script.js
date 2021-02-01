@@ -38,3 +38,26 @@ function showNextQuestion() {
 }
 
 showNextQuestion()
+
+
+function sendAnswer(answerIndex) {
+    fetch(`/answer/${answerIndex}`, {
+        method: 'POST',
+    })
+        .then(r => r.json())
+        .then(data => handleAnswerFeedback(data));
+
+}
+
+
+const buttons = document.querySelectorAll('.answer-btn');
+
+for (const button of buttons) {
+    button.addEventListener('click', (event) => {
+
+        const answerIndex = event.target.dataset.answer;
+        console.log(answerIndex)
+        sendAnswer(answerIndex)
+
+    })
+}
