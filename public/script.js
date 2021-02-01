@@ -1,8 +1,6 @@
-
 const question = document.querySelector('#question')
 const gameBoard = document.querySelector('#game-board')
 const h2 = document.querySelector('h2')
-
 
 
 function fillQuestionElements(data) {
@@ -28,7 +26,6 @@ function fillQuestionElements(data) {
 
 }
 
-
 function showNextQuestion() {
     fetch('/question', {
         method: 'GET',
@@ -39,6 +36,12 @@ function showNextQuestion() {
 
 showNextQuestion()
 
+const goodAnswersSpan = document.querySelector('#good-answers')
+
+function handleAnswerFeedback(data) {
+    goodAnswersSpan.innerText = data.goodAnswers;
+    showNextQuestion()
+}
 
 function sendAnswer(answerIndex) {
     fetch(`/answer/${answerIndex}`, {
@@ -61,3 +64,74 @@ for (const button of buttons) {
 
     })
 }
+
+
+
+function handleFriendsAnswer(data) {
+    tipDiv.innerText = data.text
+    tipDiv.style.fontSize = 50 + 'px'
+
+
+}
+
+const tipDiv = document.querySelector('#tip')
+
+
+function callToAFriend() {
+
+    fetch(`/help/friend`, {
+        method: 'GET',
+    })
+        .then(r => r.json())
+        .then(data => {
+            handleFriendsAnswer(data)
+        });
+
+}
+
+document.querySelector('#callToAFriend').addEventListener('click', callToAFriend)
+
+
+
+
+
+function handleHalfOnHalfAnswer(data) {
+
+    if (typeof data.text === "string") {
+        tipDiv.innerText = data.text
+    } else {
+        for (const button of buttons) {
+            if (data.answersToRemove.indexOf(button.innerText) > -1) {
+                button.innerText = ''
+            }
+
+        }
+
+
+    }
+}
+
+
+
+
+function halfOnHalf() {
+
+    fetch('/help/half', {
+        method: 'GET',
+    })
+        .then(r => r.json())
+        .then(data => {
+            handleHalfOnHalfAnswer(data)
+        });
+
+
+
+
+
+
+
+
+
+}
+
+document.querySelector('#half').addEventListener('click', halfOnHalf)

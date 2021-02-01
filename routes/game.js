@@ -44,7 +44,6 @@ function gameRoutes(app) {
         }
     })
 
-
     app.post('/answer/:index', (req, res) => {
         if (isGameOver) {
             res.json({
@@ -56,10 +55,10 @@ function gameRoutes(app) {
         const { index } = req.params
 
 
-        const question = questions[goodAnswers]
+        const currentQuestion = questions[goodAnswers]
 
 
-        const isGoodAnswer = question.correctAnswer === Number(index)
+        const isGoodAnswer = currentQuestion.correctAnswer === Number(index)
         if (isGoodAnswer) {
             goodAnswers++;
         } else {
@@ -72,8 +71,50 @@ function gameRoutes(app) {
         })
     })
 
+    app.get('/help/friend', (req, res) => {
+        if (callToAFriendUsed) {
+            return res.json({
+                text: 'Call to a friend already used ',
+            });
+        }
 
+        callToAFriendUsed = true;
+
+        const doesTheFriendKnowAnswer = Math.random() < 0.5;
+
+        const nextQuestion = questions[goodAnswers];
+
+        res.json({
+
+            text: doesTheFriendKnowAnswer ? `I think that the answer is ${nextQuestion.answers[nextQuestion.correctAnswer]}` : "Sorry but I can't help you, I dont know the answer"
+        })
+    })
+
+
+    app.get('/help/half', (req, res) => {
+
+        if (halfOnHalfUsed) {
+            return res.json({
+                text: 'Half on half used'
+            })
+        }
+
+        halfOnHalfUsed = true;
+
+        const question = questions[goodAnswers]
+
+        const answersCopy = question.answers.filter((s, index) => (
+            index !== question.correctAnswer
+        ))
+
+        answersCopy.splice(~~(Math.random() * answersCopy.length), 1)
+
+
+        res.json({
+            answersToRemove: answersCopy,
+        })
+
+    })
 }
-
 
 module.exports = gameRoutes;
